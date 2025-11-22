@@ -6,6 +6,7 @@ import net.minecraft.client.model.HierarchicalModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.Entity;
 
@@ -256,9 +257,25 @@ public class GoatManModel<T extends Entity> extends HierarchicalModel<T> {
 	}
 
 	@Override
-	public void setupAnim(Entity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+	public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
 
+		this.bone11.yRot = netHeadYaw * ((float)Math.PI / 180F);
+		this.bone11.xRot = headPitch * ((float)Math.PI / 180F);
+
+		if (limbSwingAmount > 0.1F && entity.onGround()) {
+			this.bone4.xRot = Mth.cos(limbSwing * 1.0F) * 1.2F * limbSwingAmount;
+			this.bone3.xRot = Mth.cos(limbSwing * 1.0F + (float)Math.PI) * 1.2F * limbSwingAmount;
+
+			this.bone12.xRot = Mth.cos(limbSwing * 1.0F + (float)Math.PI) * 0.6F * limbSwingAmount;
+			this.bone20.xRot = Mth.cos(limbSwing * 1.0F) * 0.6F * limbSwingAmount;
+		} else {
+			this.bone4.xRot = 0;
+			this.bone3.xRot = 0;
+			this.bone12.xRot = 0;
+			this.bone20.xRot = 0;
+		}
 	}
+
 
 	@Override
 	public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
